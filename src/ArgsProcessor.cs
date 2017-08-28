@@ -15,7 +15,7 @@ namespace MountIso
                 {
                     continue;
                 }
-                if (arg.Length == 2 && (arg[0] == '-' || arg[0] == '\\'))
+                if (arg.Length == 2 && (arg[0] == '-' || arg[0] == '/'))
                 {
                     char option = Char.ToLowerInvariant(arg[1]);
 
@@ -47,7 +47,7 @@ namespace MountIso
 
         public static void ShowHelp()
         {
-            Console.WriteLine("MountIso [-?] [-v] -m | -u [drive:][path]filename");
+            Console.WriteLine("MountIso [-?] [-v] -m | -d [drive:][path]filename");
             Console.WriteLine("  [drive:][path][filename]");
             Console.WriteLine("                 Specifies path to the ISO file to perform the action on.");
             Console.WriteLine();
@@ -60,9 +60,36 @@ namespace MountIso
             Console.WriteLine("to the numeric value of the driver letter e.g. 70 = F");
             Console.WriteLine("The undocumented environment variable %=ExitCodeAscii% can then be used to get the");
             Console.WriteLine("ASCII drive letter for the mounted ISO file.");
-            Console.WriteLine("");
-            Console.WriteLine("See the 'example-usage.cmd' script for an example of how to use the command.");
-            Console.WriteLine("");
+            Console.WriteLine();
+            Console.WriteLine("Example usage:");
+            Console.WriteLine();
+            Console.WriteLine("    @SETLOCAL");
+            Console.WriteLine("    @SET INPUT=LOREM_IPSUM.iso");
+            Console.WriteLine();
+            Console.WriteLine("    MountIso -v -m %INPUT%");
+            Console.WriteLine("    @IF ERRORLEVEL 255 @GOTO :END");
+            Console.WriteLine();
+            Console.WriteLine("    @SET ISODRVLETTER=%=ExitCodeAscii%");
+            Console.WriteLine("    @IF \"%ISODRVLETTER%\"==\"\" @GOTO :END");
+            Console.WriteLine();
+            Console.WriteLine("    @SET ISODRIVE=%ISODRVLETTER%:\\");
+            Console.WriteLine();
+            Console.WriteLine("    @ECHO.");
+            Console.WriteLine("    @ECHO The ISO file %INPUT% has been mounted to drive %ISODRVLETTER%");
+            Console.WriteLine("    @ECHO.");
+            Console.WriteLine();
+            Console.WriteLine("    DIR %ISODRIVE%");
+            Console.WriteLine();
+            Console.WriteLine("    @ECHO.");
+            Console.WriteLine("    @ECHO.");
+            Console.WriteLine("    @ECHO Ready to Dismount ISO file");
+            Console.WriteLine("    @PAUSE");
+            Console.WriteLine();
+            Console.WriteLine("    MountIso -d %INPUT%");
+            Console.WriteLine();
+            Console.WriteLine("    :END");
+            Console.WriteLine("    @ENDLOCAL");
+            Console.WriteLine();
         }
 
         public static void ShowConfiguration(AppContext ctx)
