@@ -70,7 +70,7 @@ namespace MountIso
 
         private static void MountDiskImage(AppContext ctx)
         {
-            string path = BuildPath(ctx.IsoPath);
+            var path = BuildPath(ctx.IsoPath);
             var diskImage = GetDiskImage(ctx, path);
 
             ctx.Status = (uint)diskImage.InvokeMethod(MountMethodName, new object[] { (int)Access.ReadOnly, false });
@@ -82,13 +82,13 @@ namespace MountIso
 
         private static void DismountDiskImage(AppContext ctx)
         {
-            string path = BuildPath(ctx.IsoPath);
+            var path = BuildPath(ctx.IsoPath);
             var diskImage = GetDiskImage(ctx, path);
 
             ctx.Status = (uint)diskImage.InvokeMethod(DismountMethodName, null);
         }
 
-        private static ManagementObject GetDiskImage(AppContext ctx, string path)
+        private static ManagementObject GetDiskImage(AppContext ctx, ManagementPath path)
         {
             ManagementObject result = new ManagementObject(path);
             result.Get();
@@ -100,10 +100,13 @@ namespace MountIso
             return result;
         }
 
-        private static string BuildPath(string imagePath)
+        private static ManagementPath BuildPath(string imagePath)
         {
-            string path = $"{NamespacePath}:{DiskImageClassName}.ImagePath='{imagePath}',StorageType={(int)StorageType.Iso}";
-            return path;
+            imagePath = imagePath.Replace("\\", "\\\\");
+
+            var result = new ManagementPath($"{NamespacePath}:{DiskImageClassName}.ImagePath=\"{imagePath}\",StorageType={(int)StorageType.Iso}");
+
+            return result;
         }
 
         private static Char GetDriveLetter(AppContext ctx, ManagementObject diskImage)
